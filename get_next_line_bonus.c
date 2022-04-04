@@ -1,97 +1,107 @@
-#include "get_next_line.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: oufisaou <oufisaou@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/01/03 20:10:28 by oufisaou          #+#    #+#             */
+/*   Updated: 2022/01/06 20:06:58 by oufisaou         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-char	*ft_find_line(char *buckup)
+#include "get_next_line_bonus.h"
+
+char	*ft_update_backup(char	*text_backup)
 {
-	int	index;
-	char	*res;
+	int		index;
+	int		count;
+	char	*new_backup_start;
 
 	index = 0;
-	if(!buckup)
+	while (*(text_backup + index) && *(text_backup + index) != '\n')
+		index++;
+	if (!(*(text_backup + index)))
+	{
+		free(text_backup);
 		return (NULL);
-	while(buckup[index] && backup[index] != '\n')
-		index++;
-	res = (char *)malloc(sizeof(char) * (i + 2));
-	if(!res)
-		return(NULL);
-	index = 0;
-	while(buckup[index] && backup[index] != '\n')
-	{
-		res[index] = buckup[index];
-		index++;
 	}
-	if(buckup[index] = '\n')
-	{
-		res[index] = buckup[index];
-		index++;
-	}
-	res[index] = '\0';
-	return (res);
-}
-
-char	*ft_backup(char *buckup);
-{
-	int	index;
-	int	count;
-	char	*res;
-
-	index = 0;
-	while(buckup[index] && buckup[index] != '\n')
-		index++;
-	if(!buckup[index])   //if there is no place to hold the elements free what we held before
-	{
-		free(buckup);
-		return(NULL);
-	}
-	res = (char *)malloc(sizeof(char) * (ft_strlen(buckup) - i + 1));
-	if(!res)
+	new_backup_start = (char *)malloc(sizeof(char) * \
+			(ft_strlen(text_backup) - index));
+	if (!new_backup_start)
 		return (NULL);
 	index++;
 	count = 0;
-	while(buckup[index])
-		res[count++] = buckup[index++];
-	res[count] = '\0';
-	free(buckup);
+	while (*(text_backup + index))
+		new_backup_start[count++] = text_backup[index++];
+	*(new_backup_start + count) = '\0';
+	free(text_backup);
+	return (new_backup_start);
 }
 
-char	*ft_read_and_backup(int fd, char *buckup)
+char	*ft_take_line(char *text_backup)
 {
-	char	*buffer;
-	int	bytes;
+	int		index;
+	char	*the_line;
 
-	buffer = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if(!buffer)
+	index = 0;
+	if (!(*(text_backup)))
 		return (NULL);
-	bytes = 1;
-	while(!ft_strchr(buckup, '\n') && bytes != 0)
+	while (*(text_backup + index) && (*(text_backup + index)) != '\n')
+		index++;
+	the_line = (char *)malloc(sizeof(char) * (index + 2));
+	if (!the_line)
+		return (NULL);
+	index = 0;
+	while (*(text_backup + index) && (*(text_backup + index)) != '\n')
 	{
-		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (bytes = -1)
+		*(the_line + index) = *(text_backup + index);
+		index++;
+	}
+	if (*(text_backup + index) == '\n')
+	{
+		*(the_line + index) = *(text_backup + index);
+		index++;
+	}
+	*(the_line + index) = '\0';
+	return (the_line);
+}
+
+char	*ft_read_backup(int fd, char *text_backup)
+{
+	int		bytes;
+	char	*text;
+
+	bytes = 1;
+	text = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!text)
+		return (NULL);
+	while ((!(ft_strchr(text_backup, '\n')) && bytes != 0))
+	{
+		bytes = read(fd, text, BUFFER_SIZE);
+		if (bytes == -1)
 		{
-			free(buff);
+			free(text);
 			return (NULL);
 		}
-		buffer[bytes] = '\0';
-		buckup = ft_strjoin(buckup, buffer);
+		text[bytes] = '\0';
+		text_backup = ft_strjoin(text_backup, text);
 	}
-	free(buffer);
-	return (buckup);
-
+	free(text);
+	return (text_backup);
 }
-
 
 char	*get_next_line(int fd)
 {
 	char		*the_line;
-	static char 	*buffer_backup[257];
+	static char	*text_backup[1024];
 
-	if(fd < 0 || BUFFER_SIZE <= 0 || fd > 256)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > 1024)
 		return (0);
-	buffer_backup = read_and_backup(fd, buffer_backup[fd]);
-	if(!buffer_backup[fd])
+	text_backup[fd] = ft_read_backup(fd, text_backup[fd]);
+	if (!text_backup[fd])
 		return (NULL);
-	the_line = ft_find_line(buffer_backup[fd]);
-	buffer_backup = ft_backup(buffer_backup[fd]);
-	return(the_line);
+	the_line = ft_take_line(text_backup[fd]);
+	text_backup[fd] = ft_update_backup(text_backup[fd]);
+	return (the_line);
 }
-
-
