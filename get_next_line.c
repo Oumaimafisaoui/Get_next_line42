@@ -104,3 +104,17 @@ char	*get_next_line(int fd)
 	text_backup = ft_update_backup(text_backup);
 	return (the_line);
 }
+
+
+int main(){
+    char *line;
+    int fd = open(argv[1], O_RDONLY);
+    
+    while (get_next_line(fd)){
+        printf("%s\n", line);
+        free(line);
+    }
+    printf("%s\n", line);
+    free(line);
+    return (0);
+} 

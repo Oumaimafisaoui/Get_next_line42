@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: oufisaou <oufisaou@student.42.fr>          +#+  +:+       +#+        */
+/*   By: codespace <codespace@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/03 19:56:21 by oufisaou          #+#    #+#             */
-/*   Updated: 2022/01/04 00:12:51 by oufisaou         ###   ########.fr       */
+/*   Updated: 2022/12/30 20:38:53 by codespace        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdio.h>
+#include <fcntl.h>
 
 char	*get_next_line(int fd);
 char	*ft_read_backup(int fd, char *text_backup);
